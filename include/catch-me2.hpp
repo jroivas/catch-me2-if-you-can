@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __CATCH_ME_TOO_IF_YOU_CAN
+#define __CATCH_ME_TOO_IF_YOU_CAN
 /* Catch Me2 (if you can)
  *
  * Simple test library compatible with Catch2:
@@ -156,4 +157,5 @@ int main(int argc, char **argv)
     if (!__test_runner(verbose)) return 1;
     return 0;
 }
+#endif
 #endif

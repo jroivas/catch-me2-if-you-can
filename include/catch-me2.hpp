@@ -109,6 +109,16 @@ TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
 #define CHECK_NOTHROW(X)  __REQUIRE_NOTHROW(X, "CHECK_NOTHROW", false)
 
 
+#define REQUIRE_THROWS_AS(X, E) std::cout << "ERROR: Unimplemented: REQUIRE_THROWS_AS\n";
+#define CHECK_THROWS_AS(X, E) std::cout << "ERROR: Unimplemented: CHECK_THROWS_AS\n";
+
+#define REQUIRE_THROWS_WITH(X, E) std::cout << "ERROR: Unimplemented: REQUIRE_THROWS_WITH\n";
+#define CHECK_THROWS_WITH(X, E) std::cout << "ERROR: Unimplemented: CHECK_THROWS_WITH\n";
+
+#define REQUIRE_THROWS_MATCHES(X, E, F) std::cout << "ERROR: Unimplemented: REQUIRE_THROWS_MATCHES\n";
+#define CHECK_THROWS_MATCHES(X, E, F) std::cout << "ERROR: Unimplemented: CHECK_THROWS_MATCHES\n";
+
+
 #ifdef CATCH_CONFIG_MAIN
 TestItem *__rootItem = nullptr;
 unsigned long __assertions = 0;

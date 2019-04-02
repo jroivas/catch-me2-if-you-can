@@ -16,4 +16,6 @@ TEST_CASE( "other", "[factorial]" ) {
     REQUIRE( true );
     REQUIRE_THROWS( throw std::string("ff") );
     REQUIRE_NOTHROW( std::string("ff") );
+    CHECK( true );
+    REQUIRE_FALSE( false );
 }

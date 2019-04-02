@@ -54,12 +54,16 @@ static void NAME()
 TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
 #define TEST_CASE(DESC, SCOPE) TEST_CASE_INT(DESC, SCOPE, __LINE__)
 
-#define REQUIRE(X) \
+#define DO_REQUIRE(X, OX, NAME) \
     if (!(X)) {\
        std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
-        std::cerr << "  REQUIRE( " << #X << " )\n";\
+        std::cerr << "  " NAME "( " << #OX << " )\n";\
         __assertions_failed++;\
     } else __assertions++;
+#define REQUIRE(X) DO_REQUIRE(X, X, "REQUIRE")
+#define CHECK(X) DO_REQUIRE(X, X, "CHECK")
+#define REQUIRE_FALSE(X) DO_REQUIRE(!(X), X, "REQUIRE_FALSE")
+#define CHECK_FALSE(X) DO_REQUIRE(!(X), X, "CHECK_FALSE")
 
 #define REQUIRE_THROWS(X) \
     try {\

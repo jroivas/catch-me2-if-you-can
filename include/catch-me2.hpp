@@ -54,16 +54,17 @@ static void NAME()
 TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
 #define TEST_CASE(DESC, SCOPE) TEST_CASE_INT(DESC, SCOPE, __LINE__)
 
-#define DO_REQUIRE(X, OX, NAME) \
+#define DO_REQUIRE(X, OX, NAME, EXIT) \
     if (!(X)) {\
        std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
         std::cerr << "  " NAME "( " << #OX << " )\n";\
         __assertions_failed++;\
+        if (EXIT) return;\
     } else __assertions++;
-#define REQUIRE(X) DO_REQUIRE(X, X, "REQUIRE")
-#define CHECK(X) DO_REQUIRE(X, X, "CHECK")
-#define REQUIRE_FALSE(X) DO_REQUIRE(!(X), X, "REQUIRE_FALSE")
-#define CHECK_FALSE(X) DO_REQUIRE(!(X), X, "CHECK_FALSE")
+#define REQUIRE(X) DO_REQUIRE(X, X, "REQUIRE", true)
+#define CHECK(X) DO_REQUIRE(X, X, "CHECK", false)
+#define REQUIRE_FALSE(X) DO_REQUIRE(!(X), X, "REQUIRE_FALSE", true)
+#define CHECK_FALSE(X) DO_REQUIRE(!(X), X, "CHECK_FALSE", false)
 
 #define REQUIRE_THROWS(X) \
     try {\
@@ -75,6 +76,7 @@ TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
     } catch (...) {\
         __assertions++;\
     }
+#define CHECK_THROWS(X) REQUIRE_THROWS(X)
 
 #define REQUIRE_NOTHROW(X) \
     try {\
@@ -98,6 +100,7 @@ TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
         std::cerr << "due unexpected error:\n";\
         __assertions_failed++;\
     }
+#define CHECK_NOTHROW(X) REQUIRE_NOTHROW(X)
 
 
 #ifdef CATCH_CONFIG_MAIN

@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <string>
 
 extern unsigned long __assertions;
 extern unsigned long __assertions_failed;
@@ -92,13 +93,13 @@ TestItem *__rootItem = nullptr;
 unsigned long __assertions = 0;
 unsigned long __assertions_failed = 0;
 
-static void report(unsigned long __tests, unsigned long __pass)
+static void report(unsigned long tests, unsigned long pass)
 {
-    unsigned long __failed = __tests - __pass;
-    if (__failed) {
-        std::cout << "test cases: " << __tests;
-        if (__pass > 0) std::cout << " | " <<  __pass << " passed";
-        std::cout << " | " <<  __failed << " failed";
+    unsigned long failed = tests - pass;
+    if (failed) {
+        std::cout << "test cases: " << tests;
+        if (pass > 0) std::cout << " | " <<  pass << " passed";
+        std::cout << " | " << failed << " failed";
         std::cout << "\n";
 
         std::cout << "assertions: " << (__assertions + __assertions_failed);
@@ -106,18 +107,17 @@ static void report(unsigned long __tests, unsigned long __pass)
         std::cout << " | " <<  __assertions_failed << " failed";
         std::cout << "\n";
     } else {
-        std::string plural = __tests > 1 ? "s" : "";
         std::cout << "All tests passed (" <<
             __assertions <<
-            " assertions in " << __tests <<
-            " test case" << plural << ")\n";
+            " assertions in " << tests <<
+            " test case" << (tests > 1 ? "s" : "") << ")\n";
     }
 }
 
 static bool __test_runner(bool verbose=false)
 {
-    static unsigned long __tests = 0;
-    static unsigned long __pass = 0;
+    static unsigned long tests = 0;
+    static unsigned long pass = 0;
 
     if (__rootItem == nullptr) {
         std::cout << "No tests!\n";
@@ -125,17 +125,17 @@ static bool __test_runner(bool verbose=false)
     }
     TestItem *item = __rootItem;
     while (item != nullptr) {
-        __tests++;
+        tests++;
 
         unsigned int pre = __assertions_failed;
         if (verbose) std::cout << "++ " << item->name << "\n";
         item->test();
-        if (pre == __assertions_failed) __pass++;
+        if (pre == __assertions_failed) pass++;
 
         item = item->next;
     }
-    report(__tests, __pass);
-    return __pass == __tests;
+    report(tests, pass);
+    return pass == tests;
 }
 
 int main(int argc, char **argv)

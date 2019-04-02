@@ -1,7 +1,10 @@
 #pragma once
 /* Catch Me2 (if you can)
- * Simple test library compatible with Catch2
+ *
+ * Simple test library compatible with Catch2:
+ * https://github.com/catchorg/Catch2
  * Focus on compile speed and compile time memory footprint at cost of features.
+ *
  * Copyright (c)2019 Jouni Roivas <jroivas@iki.fi>
  */
 
@@ -13,6 +16,7 @@ extern unsigned long __assertions_failed;
 
 typedef void (TestCase)(void);
 
+// Contains information and implementation about test cases as linked list
 class TestItem {
 public:
     TestItem(std::string n, TestCase *t) : name(n), test(t), next(nullptr) {}
@@ -27,23 +31,26 @@ public:
 };
 
 extern TestItem *__rootItem;
+// Registers TestCase
 class TestCases
 {
 public:
     TestCases(std::string scope, std::string name, TestCase *test) {
-        std::string scopename = scope + " " +name;
-        __rootItem = TestItem::add(__rootItem, new TestItem(scopename, test));
+        // Add test case to global TestItem linked list
+        __rootItem = TestItem::add(
+                __rootItem,
+                new TestItem(scope + " " +name, test));
     };
 };
 
 #define TEST_CASE_UNIQ_NAME(a) testCase ## a
 #define TEST_CASE_UNIQ_OBJ_NAME(a) testCaseObj ## a
 #define TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, NAME) \
-    static void NAME();\
-    static TestCases TEST_CASE_UNIQ_OBJ_NAME(ID)(SCOPE, DESC, NAME);\
-    static void NAME()
+static void NAME();\
+static TestCases TEST_CASE_UNIQ_OBJ_NAME(ID)(SCOPE, DESC, NAME);\
+static void NAME()
 #define TEST_CASE_INT(DESC, SCOPE, ID) \
-    TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
+TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
 #define TEST_CASE(DESC, SCOPE) TEST_CASE_INT(DESC, SCOPE, __LINE__)
 
 #define REQUIRE(X) \
@@ -55,7 +62,7 @@ public:
 
 #define REQUIRE_THROWS(X) \
     try {\
-        do { X; } while(0);\
+        X;\
         std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
         std::cerr << "  REQUIRE_THROWS( " << #X << " )\n";\
         std::cerr << "because no exception was thrown where one was expected\n";\
@@ -66,7 +73,7 @@ public:
 
 #define REQUIRE_NOTHROW(X) \
     try {\
-        do { X; } while(0);\
+        X;\
         __assertions++;\
     } catch (std::string e) {\
         std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\

@@ -14,6 +14,8 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
 
 TEST_CASE( "other", "[test]" ) {
     REQUIRE( true );
+    CHECK_THROWS(  std::string("ff") );
+    CHECK_NOTHROW( throw std::string("ff") );
     REQUIRE_THROWS( throw std::string("ff") );
     REQUIRE_NOTHROW( std::string("ff") );
     CHECK( true );

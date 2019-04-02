@@ -54,53 +54,59 @@ static void NAME()
 TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
 #define TEST_CASE(DESC, SCOPE) TEST_CASE_INT(DESC, SCOPE, __LINE__)
 
-#define DO_REQUIRE(X, OX, NAME, EXIT) \
+#define __REQUIRE(X, OX, NAME, EXIT) \
     if (!(X)) {\
        std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
         std::cerr << "  " NAME "( " << #OX << " )\n";\
         __assertions_failed++;\
         if (EXIT) return;\
     } else __assertions++;
-#define REQUIRE(X) DO_REQUIRE(X, X, "REQUIRE", true)
-#define CHECK(X) DO_REQUIRE(X, X, "CHECK", false)
-#define REQUIRE_FALSE(X) DO_REQUIRE(!(X), X, "REQUIRE_FALSE", true)
-#define CHECK_FALSE(X) DO_REQUIRE(!(X), X, "CHECK_FALSE", false)
+#define REQUIRE(X) __REQUIRE(X, X, "REQUIRE", true)
+#define CHECK(X) __REQUIRE(X, X, "CHECK", false)
+#define REQUIRE_FALSE(X) __REQUIRE(!(X), X, "REQUIRE_FALSE", true)
+#define CHECK_FALSE(X) __REQUIRE(!(X), X, "CHECK_FALSE", false)
 
-#define REQUIRE_THROWS(X) \
+#define __REQUIRE_THROWS(X, NAME, EXIT) \
     try {\
         X;\
         std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
-        std::cerr << "  REQUIRE_THROWS( " << #X << " )\n";\
+        std::cerr << "  " NAME "( " << #X << " )\n";\
         std::cerr << "because no exception was thrown where one was expected\n";\
         __assertions_failed++;\
+        if (EXIT) return;\
     } catch (...) {\
         __assertions++;\
     }
-#define CHECK_THROWS(X) REQUIRE_THROWS(X)
+#define REQUIRE_THROWS(X) __REQUIRE_THROWS(X, "REQUIRE_THROWS", true)
+#define CHECK_THROWS(X) __REQUIRE_THROWS(X, "CHECK_THROWS", false)
 
-#define REQUIRE_NOTHROW(X) \
+#define __REQUIRE_NOTHROW(X, NAME, EXIT) \
     try {\
         X;\
         __assertions++;\
     } catch (std::string e) {\
         std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
-        std::cerr << "  REQUIRE_NOTHROW( " << #X << " )\n";\
+        std::cerr << "  " NAME "( " << #X << " )\n";\
         std::cerr << "due unexpected error with message:\n";\
         std::cerr << "  " << e << "\n";\
         __assertions_failed++;\
+        if (EXIT) return;\
     } catch (char *e) {\
         std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
-        std::cerr << "  REQUIRE_NOTHROW( " << #X << " )\n";\
+        std::cerr << "  " NAME "( " << #X << " )\n";\
         std::cerr << "due unexpected error with message:\n";\
         std::cerr << "  " << e << "\n";\
         __assertions_failed++;\
+        if (EXIT) return;\
     } catch (...) {\
         std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
-        std::cerr << "  REQUIRE_NOTHROW( " << #X << " )\n";\
+        std::cerr << "  " NAME "( " << #X << " )\n";\
         std::cerr << "due unexpected error:\n";\
         __assertions_failed++;\
+        if (EXIT) return;\
     }
-#define CHECK_NOTHROW(X) REQUIRE_NOTHROW(X)
+#define REQUIRE_NOTHROW(X) __REQUIRE_NOTHROW(X, "REQUIRE_NOTHROW", true)
+#define CHECK_NOTHROW(X)  __REQUIRE_NOTHROW(X, "CHECK_NOTHROW", false)
 
 
 #ifdef CATCH_CONFIG_MAIN

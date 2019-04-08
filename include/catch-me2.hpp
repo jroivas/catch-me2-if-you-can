@@ -55,12 +55,34 @@ TEST_CASE_INT_WITH_NAME(DESC, SCOPE, ID, TEST_CASE_UNIQ_NAME(ID))
 #define TEST_CASE(DESC, SCOPE) TEST_CASE_INT(DESC, SCOPE, __LINE__)
 
 #define __REQUIRE(X, OX, NAME, EXIT) \
-    if (!(X)) {\
+    try {\
+        if (!(X)) {\
+            std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
+            std::cerr << "  " NAME "( " << #OX << " )\n";\
+            __assertions_failed++;\
+            if (EXIT) return;\
+        } else __assertions++;\
+    } catch (const char *s) {\
        std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
-        std::cerr << "  " NAME "( " << #OX << " )\n";\
+       std::cerr << "  " NAME "( " << #OX << " )\n";\
+       std::cerr << "due to unexpected exception with message:\n";\
+       std::cerr << "  " << s << "\n";\
         __assertions_failed++;\
         if (EXIT) return;\
-    } else __assertions++;
+    } catch (std::string s) {\
+       std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
+       std::cerr << "  " NAME "( " << #OX << " )\n";\
+       std::cerr << "due to unexpected exception with message:\n";\
+       std::cerr << "  " << s << "\n";\
+        __assertions_failed++;\
+        if (EXIT) return;\
+    } catch (...) {\
+       std::cerr << __FILE__ << ":" << __LINE__ << " FAILED:\n";\
+       std::cerr << "  " NAME "( " << #OX << " )\n";\
+       std::cerr << "due to unexpected exception with message:\n  Unknown exception\n";\
+        __assertions_failed++;\
+        if (EXIT) return;\
+    }
 #define REQUIRE(X) __REQUIRE(X, X, "REQUIRE", true)
 #define CHECK(X) __REQUIRE(X, X, "CHECK", false)
 #define REQUIRE_FALSE(X) __REQUIRE(!(X), X, "REQUIRE_FALSE", true)
